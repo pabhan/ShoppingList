@@ -13,7 +13,7 @@ constructor(){
 }
 componentDidMount() {
     this.setState({
-      id: this.props.expense._id
+      id: this.props.item._id
     })
   }
 onClick(e){
@@ -22,7 +22,7 @@ onClick(e){
 delete(e){
     axios.get('/delete?id='+e.state.id)
       .then(function(response) {
-          
+
     });
 }
 render(){

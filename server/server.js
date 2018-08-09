@@ -12,7 +12,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
-mongoose.connect('mongodb://xpavnix:fed90fed@ds117158.mlab.com:17158/expenses',{ useNewUrlParser: true });
+mongoose.connect('mongodb://test:fed90fed@ds217092.mlab.com:17092/items',{ useNewUrlParser: true });
 
 
 app.use('/', router);

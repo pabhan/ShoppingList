@@ -2183,7 +2183,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * 
+ *
  */
 
 function makeEmptyFunction(arg) {
@@ -5348,7 +5348,7 @@ keyCode.isEventKey = function isEventKey(event, nameOrCode) {
       // check codes
       var foundNamedKey = codes[nameOrCode.toLowerCase()]
       if (foundNamedKey) { return foundNamedKey === keyCode; }
-    
+
       // check aliases
       var foundNamedKey = aliases[nameOrCode.toLowerCase()]
       if (foundNamedKey) { return foundNamedKey === keyCode; }
@@ -6123,7 +6123,7 @@ module.exports = getActiveElement;
  * LICENSE file in the root directory of this source tree.
  *
  * @typechecks
- * 
+ *
  */
 
 /*eslint-disable no-self-compare */
@@ -6195,7 +6195,7 @@ module.exports = shallowEqual;
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * 
+ *
  */
 
 var isTextNode = __webpack_require__(171);
@@ -33867,7 +33867,7 @@ var App = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
-    _this.state = { selectedMonth: 'All', selectedYear: 2016, data: [] };
+    _this.state = { selectedName: 'Item', selectedQuantity: '1', data: [] };
     _this.getData = _this.getData.bind(_this);
     return _this;
   }
@@ -33875,19 +33875,19 @@ var App = function (_React$Component) {
   _createClass(App, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.getData(this, '2016');
+      this.getData(this, '1');
     }
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      this.getData(this, '2016');
+      this.getData(this, '1');
     }
   }, {
     key: 'getData',
-    value: function getData(ev, year) {
-      _axios2.default.get('/getAll?month=All&year=' + year).then(function (response) {
+    value: function getData(ev, data) {
+      _axios2.default.get('/getAll').then(function (response) {
         ev.setState({ data: response.data });
-        ev.setState({ selectedYear: parseInt(year) });
+        ev.setState({ selectedQuantity: parseInt(data) });
       });
     }
   }, {
@@ -33896,7 +33896,7 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_Add2.default, { selectedMonth: this.state.selectedMonth, selectedYear: this.state.selectedYear }),
+        _react2.default.createElement(_Add2.default, { selectedName: this.state.selectedName, selectedQuantity: this.state.selectedQuantity }),
         _react2.default.createElement(
           'table',
           null,
@@ -33910,22 +33910,12 @@ var App = function (_React$Component) {
               _react2.default.createElement(
                 'th',
                 { className: 'desc-col' },
-                'Description'
+                'Name'
               ),
               _react2.default.createElement(
                 'th',
                 { className: 'button-col' },
-                'Amount'
-              ),
-              _react2.default.createElement(
-                'th',
-                { className: 'button-col' },
-                'Month'
-              ),
-              _react2.default.createElement(
-                'th',
-                { className: 'button-col' },
-                'Year'
+                'Quantity'
               ),
               _react2.default.createElement(
                 'th',
@@ -33942,7 +33932,7 @@ var App = function (_React$Component) {
           _react2.default.createElement(
             'tbody',
             null,
-            this.state.data.map(function (exp) {
+            this.state.data.map(function (item) {
               return _react2.default.createElement(
                 'tr',
                 null,
@@ -33950,32 +33940,22 @@ var App = function (_React$Component) {
                 _react2.default.createElement(
                   'td',
                   { className: 'desc-col' },
-                  exp.description
+                  item.name
                 ),
                 _react2.default.createElement(
                   'td',
                   { className: 'button-col' },
-                  exp.amount
+                  item.quantity
                 ),
                 _react2.default.createElement(
                   'td',
                   { className: 'button-col' },
-                  exp.month
+                  _react2.default.createElement(_Update2.default, { item: item })
                 ),
                 _react2.default.createElement(
                   'td',
                   { className: 'button-col' },
-                  exp.year
-                ),
-                _react2.default.createElement(
-                  'td',
-                  { className: 'button-col' },
-                  _react2.default.createElement(_Update2.default, { expense: exp })
-                ),
-                _react2.default.createElement(
-                  'td',
-                  { className: 'button-col' },
-                  _react2.default.createElement(_Delete2.default, { id: exp._id, expense: exp })
+                  _react2.default.createElement(_Delete2.default, { id: item._id, item: item })
                 )
               );
             })
@@ -34921,17 +34901,14 @@ var Add = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Add.__proto__ || Object.getPrototypeOf(Add)).call(this));
 
     _this.state = {
-      description: '',
-      amount: '',
-      month: '',
-      year: '',
+      name: '',
+      quantity: '',
       messageFromServer: '',
       modalIsOpen: false
     };
-    _this.handleSelectChange = _this.handleSelectChange.bind(_this);
     _this.onClick = _this.onClick.bind(_this);
     _this.handleTextChange = _this.handleTextChange.bind(_this);
-    _this.insertNewExpense = _this.insertNewExpense.bind(_this);
+    _this.insertNewItem = _this.insertNewItem.bind(_this);
     _this.openModal = _this.openModal.bind(_this);
     _this.closeModal = _this.closeModal.bind(_this);
     return _this;
@@ -34949,10 +34926,8 @@ var Add = function (_React$Component) {
     value: function closeModal() {
       this.setState({
         modalIsOpen: false,
-        description: '',
-        amount: '',
-        month: 'Jan',
-        year: 2016,
+        name: '',
+        quantity: '',
         messageFromServer: ''
       });
     }
@@ -34960,39 +34935,23 @@ var Add = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.setState({
-        month: this.props.selectedMonth
+        name: this.props.selectedName
       });
       this.setState({
-        year: this.props.selectedYear
+        quantity: this.props.selectedQuantity
       });
-    }
-  }, {
-    key: 'handleSelectChange',
-    value: function handleSelectChange(e) {
-      if (e.target.name == 'month') {
-        this.setState({
-          month: e.target.value
-        });
-      }
-      if (e.target.name == 'year') {
-        this.setState({
-          year: e.target.value
-        });
-      }
     }
   }, {
     key: 'onClick',
     value: function onClick(e) {
-      this.insertNewExpense(this);
+      this.insertNewItem(this);
     }
   }, {
-    key: 'insertNewExpense',
-    value: function insertNewExpense(e) {
+    key: 'insertNewItem',
+    value: function insertNewItem(e) {
       _axios2.default.post('/insert', querystring.stringify({
-        desc: e.state.description,
-        amount: e.state.amount,
-        month: e.state.month,
-        year: e.state.year
+        name: e.state.name,
+        quantity: e.state.quantity
       }), {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
@@ -35006,14 +34965,14 @@ var Add = function (_React$Component) {
   }, {
     key: 'handleTextChange',
     value: function handleTextChange(e) {
-      if (e.target.name == "description") {
+      if (e.target.name == "name") {
         this.setState({
-          description: e.target.value
+          name: e.target.value
         });
       }
-      if (e.target.name == "amount") {
+      if (e.target.name == "quantity") {
         this.setState({
-          amount: e.target.value
+          quantity: e.target.value
         });
       }
     }
@@ -35034,14 +34993,14 @@ var Add = function (_React$Component) {
             {
               isOpen: this.state.modalIsOpen,
               onRequestClose: this.closeModal,
-              contentLabel: 'Add Expense',
+              contentLabel: 'Add Item',
               className: 'Modal' },
             _react2.default.createElement(
               _reactRouterDom.Link,
               { to: { pathname: '/', search: '' }, style: { textDecoration: 'none' } },
               _react2.default.createElement(
                 _reactBootstrap.Button,
-                { bsStyle: 'danger', bsSize: 'mini', onClick: this.closeModal },
+                { bsStyle: 'danger', bsSize: 'xs', onClick: this.closeModal },
                 _react2.default.createElement('span', { className: 'closebtn glyphicon glyphicon-remove' })
               )
             ),
@@ -35051,119 +35010,16 @@ var Add = function (_React$Component) {
               null,
               _react2.default.createElement(
                 'label',
-                { 'for': 'description' },
-                'Description:'
+                { 'htmlFor': 'name' },
+                'Name:'
               ),
-              _react2.default.createElement('input', { type: 'text', id: 'description', name: 'description', value: this.state.description, onChange: this.handleTextChange }),
+              _react2.default.createElement('input', { type: 'text', id: 'name', name: 'name', value: this.state.name, onChange: this.handleTextChange }),
               _react2.default.createElement(
                 'label',
-                { 'for': 'amount' },
-                'Amount:'
+                { 'htmlFor': 'quantity' },
+                'Item:'
               ),
-              _react2.default.createElement('input', { type: 'number', id: 'amount', name: 'amount', value: this.state.amount, onChange: this.handleTextChange }),
-              _react2.default.createElement(
-                'label',
-                { 'for': 'month' },
-                'Month:'
-              ),
-              _react2.default.createElement(
-                'select',
-                { id: 'month', name: 'month', value: this.state.month, onChange: this.handleSelectChange },
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jan', id: 'Jan' },
-                  'January'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Feb', id: 'Feb' },
-                  'Febrary'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Mar', id: 'Mar' },
-                  'March'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Apr', id: 'Apr' },
-                  'April'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'May', id: 'May' },
-                  'May'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jun', id: 'Jun' },
-                  'June'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jul', id: 'Jul' },
-                  'July'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Aug', id: 'Aug' },
-                  'August'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Sep', id: 'Sep' },
-                  'September'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Oct', id: 'Oct' },
-                  'October'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Nov', id: 'Nov' },
-                  'November'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Dec', id: 'Dec' },
-                  'December'
-                )
-              ),
-              _react2.default.createElement(
-                'label',
-                { 'for': 'year' },
-                'Year:'
-              ),
-              _react2.default.createElement(
-                'select',
-                { id: 'year', name: 'year', value: this.state.year, onChange: this.handleSelectChange },
-                _react2.default.createElement(
-                  'option',
-                  { value: '2016', id: '16' },
-                  '2016'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2017', id: '17' },
-                  '2017'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2018', id: '18' },
-                  '2018'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2019', id: '19' },
-                  '2019'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2020', id: '20' },
-                  '2020'
-                )
-              )
+              _react2.default.createElement('input', { type: 'number', id: 'quantity', name: 'quantity', value: this.state.quantity, onChange: this.handleTextChange })
             ),
             _react2.default.createElement(
               'div',
@@ -35172,7 +35028,7 @@ var Add = function (_React$Component) {
               _react2.default.createElement(
                 _reactBootstrap.Button,
                 { bsStyle: 'success', bsSize: 'small', onClick: this.onClick },
-                'Add New Expense'
+                'Add New Item'
               )
             )
           )
@@ -35192,7 +35048,7 @@ var Add = function (_React$Component) {
               isOpen: this.state.modalIsOpen,
               onAfterOpen: this.afterOpenModal,
               onRequestClose: this.closeModal,
-              contentLabel: 'Add Expense',
+              contentLabel: 'Add Item',
               className: 'Modal' },
             _react2.default.createElement(
               'div',
@@ -35207,7 +35063,7 @@ var Add = function (_React$Component) {
                 { to: { pathname: '/', search: '' }, style: { textDecoration: 'none' } },
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { bsStyle: 'success', bsSize: 'mini', onClick: this.closeModal },
+                  { bsStyle: 'success', bsSize: 'xs', onClick: this.closeModal },
                   'Close the Dialog'
                 )
               )
@@ -48110,15 +47966,12 @@ var Update = function (_React$Component) {
 
     _this.state = {
       id: '',
-      description: '',
-      amount: '',
-      month: '',
-      year: '',
+      name: '',
+      quantity: '',
       messageFromServer: '',
       modalIsOpen: false
     };
     _this.update = _this.update.bind(_this);
-    _this.handleSelectChange = _this.handleSelectChange.bind(_this);
     _this.onClick = _this.onClick.bind(_this);
     _this.handleTextChange = _this.handleTextChange.bind(_this);
     _this.openModal = _this.openModal.bind(_this);
@@ -48130,11 +47983,9 @@ var Update = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.setState({
-        id: this.props.expense._id,
-        description: this.props.expense.description,
-        amount: this.props.expense.amount,
-        month: this.props.expense.month,
-        year: this.props.expense.year
+        id: this.props.item._id,
+        name: this.props.item.name,
+        quantity: this.props.item.quantity
       });
     }
   }, {
@@ -48153,30 +48004,16 @@ var Update = function (_React$Component) {
       });
     }
   }, {
-    key: 'handleSelectChange',
-    value: function handleSelectChange(e) {
-      if (e.target.name == "month") {
-        this.setState({
-          month: e.target.value
-        });
-      }
-      if (e.target.name == "year") {
-        this.setState({
-          year: e.target.value
-        });
-      }
-    }
-  }, {
     key: 'handleTextChange',
     value: function handleTextChange(e) {
-      if (e.target.name == "description") {
+      if (e.target.name == "name") {
         this.setState({
-          description: e.target.value
+          name: e.target.value
         });
       }
-      if (e.target.name == "amount") {
+      if (e.target.name == "quantity") {
         this.setState({
-          amount: e.target.value
+          quantity: e.target.value
         });
       }
     }
@@ -48190,10 +48027,8 @@ var Update = function (_React$Component) {
     value: function update(e) {
       _axios2.default.post('/update', querystring.stringify({
         _id: e.state.id,
-        description: e.state.description,
-        amount: e.state.amount,
-        month: e.state.month,
-        year: e.state.year
+        name: e.state.name,
+        quantity: e.state.quantity
       }), {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
@@ -48221,14 +48056,14 @@ var Update = function (_React$Component) {
             {
               isOpen: this.state.modalIsOpen,
               onRequestClose: this.closeModal,
-              contentLabel: 'Add Expense',
+              contentLabel: 'Add Item',
               className: 'Modal' },
             _react2.default.createElement(
               _reactRouterDom.Link,
               { to: { pathname: '/', search: '' }, style: { textDecoration: 'none' } },
               _react2.default.createElement(
                 _reactBootstrap.Button,
-                { bsStyle: 'danger', bsSize: 'mini', onClick: this.closeModal },
+                { bsStyle: 'danger', bsSize: 'xs', onClick: this.closeModal },
                 _react2.default.createElement('span', { className: 'closebtn glyphicon glyphicon-remove' })
               )
             ),
@@ -48238,124 +48073,16 @@ var Update = function (_React$Component) {
               null,
               _react2.default.createElement(
                 'label',
-                { 'for': 'description' },
-                'Description:'
+                { 'htmlFor': 'name' },
+                'Name:'
               ),
-              _react2.default.createElement('input', { type: 'text', id: 'description', name: 'description', value: this.state.description, onChange: this.handleTextChange }),
+              _react2.default.createElement('input', { type: 'text', id: 'name', name: 'name', value: this.state.name, onChange: this.handleTextChange }),
               _react2.default.createElement(
                 'label',
-                { 'for': 'amount' },
-                'Amount:'
+                { 'htmlFor': 'quantity' },
+                'Quantity:'
               ),
-              _react2.default.createElement('input', { type: 'number', id: 'amount', name: 'amount', value: this.state.amount, onChange: this.handleTextChange }),
-              _react2.default.createElement(
-                'label',
-                { 'for': 'month' },
-                'Month:'
-              ),
-              _react2.default.createElement(
-                'select',
-                { id: 'month', name: 'month', value: this.state.month, onChange: this.handleSelectChange },
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jan', id: 'Jan' },
-                  'January'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Feb', id: 'Feb' },
-                  'Febrary'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Mar', id: 'Mar' },
-                  'March'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Apr', id: 'Apr' },
-                  'April'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'May', id: 'May' },
-                  'May'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jun', id: 'Jun' },
-                  'June'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Jul', id: 'Jul' },
-                  'July'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Aug', id: 'Aug' },
-                  'August'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Sep', id: 'Sep' },
-                  'September'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Oct', id: 'Oct' },
-                  'October'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Nov', id: 'Nov' },
-                  'November'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: 'Dec', id: 'Dec' },
-                  'December'
-                )
-              ),
-              _react2.default.createElement(
-                'label',
-                { 'for': 'year' },
-                'Year:'
-              ),
-              _react2.default.createElement(
-                'select',
-                { id: 'year', name: 'year', value: this.state.year, onChange: this.handleSelectChange },
-                _react2.default.createElement(
-                  'option',
-                  { value: '2015', id: '17' },
-                  '2015'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2016', id: '17' },
-                  '2016'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2017', id: '17' },
-                  '2017'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2018', id: '18' },
-                  '2018'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2019', id: '19' },
-                  '2019'
-                ),
-                _react2.default.createElement(
-                  'option',
-                  { value: '2020', id: '20' },
-                  '2020'
-                )
-              )
+              _react2.default.createElement('input', { type: 'number', id: 'quantity', name: 'quantity', value: this.state.quantity, onChange: this.handleTextChange })
             ),
             _react2.default.createElement(
               'div',
@@ -48384,7 +48111,7 @@ var Update = function (_React$Component) {
               isOpen: this.state.modalIsOpen,
               onAfterOpen: this.afterOpenModal,
               onRequestClose: this.closeModal,
-              contentLabel: 'Add Expense',
+              contentLabel: 'Add Item',
               className: 'Modal' },
             _react2.default.createElement(
               'div',
@@ -48399,7 +48126,7 @@ var Update = function (_React$Component) {
                 { to: { pathname: '/', search: '' }, style: { textDecoration: 'none' } },
                 _react2.default.createElement(
                   _reactBootstrap.Button,
-                  { bsStyle: 'success', bsSize: 'mini', onClick: this.closeModal },
+                  { bsStyle: 'success', bsSize: 'xs', onClick: this.closeModal },
                   'Close the Dialog'
                 )
               )
@@ -48471,7 +48198,7 @@ var Delete = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.setState({
-        id: this.props.expense._id
+        id: this.props.item._id
       });
     }
   }, {

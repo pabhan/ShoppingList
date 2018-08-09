@@ -1,7 +1,7 @@
 //server/routes/routes.js
 var express = require('express');
 var bodyParser = require('body-parser');
-var Expense = require('../../models/Expense');
+var Item = require('../../models/Item');
 
 var router = express.Router();
 router.get('/', function(req, res){
@@ -11,56 +11,53 @@ router.get('/', function(req, res){
 
 router.route('/insert')
 .post(function(req,res) {
- var expense = new Expense();
-  expense.description = req.body.desc;
-  expense.amount = req.body.amount;
-  expense.month = req.body.month;
-  expense.year = req.body.year;
-expense.save(function(err) {
+ var item = new Item();
+  item.name = req.body.name;
+  item.quantity = req.body.quantity;
+item.save(function(err) {
       if (err)
         res.send(err);
-      res.send('Expense successfully added!');
+      res.send('Item successfully added!');
   });
 })
 router.route('/update')
 .post(function(req, res) {
  const doc = {
-     description: req.body.description,
-     amount: req.body.amount,
-     month: req.body.month,
-     year: req.body.year
+     name: req.body.name,
+     quantity: req.body.quantity
  };
  console.log(doc);
-  Expense.update({_id: req.body._id}, doc, function(err, result) {
+  Item.update({_id: req.body._id}, doc, function(err, result) {
       if (err)
         res.send(err);
-      res.send('Expense successfully updated!');
+      res.send('Item successfully updated!');
   });
 });
 router.get('/delete', function(req, res){
  var id = req.query.id;
- Expense.find({_id: id}).remove().exec(function(err, expense) {
+ Item.find({_id: id}).remove().exec(function(err, item) {
   if(err)
    res.send(err)
-  res.send('Expense successfully deleted!');
+  res.send('Item successfully deleted!');
  })
 });
 router.get('/getAll',function(req, res) {
- var monthRec = req.query.month;
- var yearRec = req.query.year;
- if(monthRec && monthRec != 'All'){
-  Expense.find({$and: [ {month: monthRec}, {year: yearRec}]}, function(err, expenses) {
-   if (err)
-    res.send(err);
-   res.json(expenses);
-  });
- } else {
-  Expense.find({year: yearRec}, function(err, expenses) {
-   if (err)
-    res.send(err);
-   res.json(expenses);
-  });
- }
+ // var nameRec = req.query.name;
+ // var quantityRec = req.query.quantity;
+ // if(nameRec && nameRec != 'All'){
+ //  Item.find({$and: [ {name: nameRec}, {quantity: quantityRec}]}, function(err, items) {
+ //   if (err)
+ //    res.send(err);
+ //   res.json(items);
+ //  });
+ // } else {
+   // Item.find({quantity: quantityRec}, function(err, items) {
+   Item.find({}, function(err, items) {
+     if (err)
+       res.send(err);
+     res.json(items);
+   });
+// }
 });
 
 module.exports = router;

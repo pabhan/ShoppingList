@@ -9,17 +9,14 @@ class Add extends React.Component {
 constructor() {
       super();
 this.state = {
-        description: '',
-        amount: '',
-        month: '',
-        year: '',
+        name: '',
+        quantity: '',
         messageFromServer: '',
         modalIsOpen: false
       }
-this.handleSelectChange = this.handleSelectChange.bind(this);
       this.onClick = this.onClick.bind(this);
       this.handleTextChange = this.handleTextChange.bind(this);
-      this.insertNewExpense = this.insertNewExpense.bind(this);
+      this.insertNewItem = this.insertNewItem.bind(this);
       this.openModal = this.openModal.bind(this);
       this.closeModal = this.closeModal.bind(this);
     }
@@ -31,43 +28,27 @@ openModal() {
 closeModal() {
       this.setState({
         modalIsOpen: false,
-        description: '',
-        amount: '',
-        month: 'Jan',
-        year: 2016,
+        name: '',
+        quantity: '',
         messageFromServer: ''
       });
     }
 componentDidMount() {
       this.setState({
-        month: this.props.selectedMonth
+        name: this.props.selectedName
       });
       this.setState({
-        year: this.props.selectedYear
+        quantity: this.props.selectedQuantity
       });
-    }
-handleSelectChange(e) {
-      if (e.target.name == 'month') {
-        this.setState({
-          month: e.target.value
-        });
-      }
-      if (e.target.name == 'year') {
-        this.setState({
-          year: e.target.value
-        });
-      }
-    }
+}
 onClick(e) {
-      this.insertNewExpense(this);
+      this.insertNewItem(this);
     }
-insertNewExpense(e) {
+insertNewItem(e) {
       axios.post('/insert',
         querystring.stringify({
-          desc: e.state.description,
-          amount: e.state.amount,
-          month: e.state.month,
-          year: e.state.year
+          name: e.state.name,
+          quantity: e.state.quantity
         }), {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -79,14 +60,14 @@ insertNewExpense(e) {
       });
     }
 handleTextChange(e) {
-      if (e.target.name == "description") {
+      if (e.target.name == "name") {
         this.setState({
-          description: e.target.value
+          name: e.target.value
         });
       }
-if (e.target.name == "amount") {
+if (e.target.name == "quantity") {
         this.setState({
-          amount: e.target.value
+          quantity: e.target.value
         });
       }
     }
@@ -98,39 +79,18 @@ render() {
           <Modal
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
-            contentLabel="Add Expense"
+            contentLabel="Add Item"
        className="Modal">
 <Link to={{pathname: '/', search: '' }} style={{ textDecoration: 'none' }}>
        <Button bsStyle="danger" bsSize="xs" onClick={this.closeModal}><span className="closebtn glyphicon glyphicon-remove"></span></Button>
       </Link><br/>
 <fieldset>
-       <label for="description">Description:</label><input type="text" id="description" name="description" value={this.state.description} onChange={this.handleTextChange}></input>
-       <label for="amount">Amount:</label><input type="number" id="amount" name="amount" value={this.state.amount} onChange={this.handleTextChange}></input>
-       <label for="month">Month:</label><select id="month" name="month" value={this.state.month} onChange={this.handleSelectChange}>
-            <option value="Jan" id="Jan">January</option>
-            <option value="Feb" id="Feb">Febrary</option>
-            <option value="Mar" id="Mar">March</option>
-            <option value="Apr" id="Apr">April</option>
-            <option value="May" id="May">May</option>
-            <option value="Jun" id="Jun">June</option>
-            <option value="Jul" id="Jul">July</option>
-            <option value="Aug" id="Aug">August</option>
-            <option value="Sep" id="Sep">September</option>
-            <option value="Oct" id="Oct">October</option>
-            <option value="Nov" id="Nov">November</option>
-            <option value="Dec" id="Dec">December</option>
-         </select>
-       <label for="year">Year:</label><select id="year" name="year" value={this.state.year} onChange={this.handleSelectChange}>
-            <option value="2016" id="16">2016</option>
-            <option value="2017" id="17">2017</option>
-            <option value="2018" id="18">2018</option>
-            <option value="2019" id="19">2019</option>
-            <option value="2020" id="20">2020</option>
-         </select>
-      </fieldset>
+       <label htmlFor="name">Name:</label><input type="text" id="name" name="name" value={this.state.name} onChange={this.handleTextChange}></input>
+       <label htmlFor="quantity">Item:</label><input type="number" id="quantity" name="quantity" value={this.state.quantity} onChange={this.handleTextChange}></input>
+</fieldset>
 <div className='button-center'>
         <br/>
-        <Button bsStyle="success" bsSize="small" onClick={this.onClick}>Add New Expense</Button>
+        <Button bsStyle="success" bsSize="small" onClick={this.onClick}>Add New Item</Button>
        </div>
           </Modal>
         </div>
@@ -144,12 +104,12 @@ render() {
         isOpen={this.state.modalIsOpen}
         onAfterOpen={this.afterOpenModal}
         onRequestClose={this.closeModal}
-        contentLabel="Add Expense"
+        contentLabel="Add Item"
         className="Modal">
 <div className='button-center'>
         <h3>{this.state.messageFromServer}</h3>
         <Link to={{pathname: '/', search: '' }} style={{ textDecoration: 'none' }}>
-         <Button bsStyle="success" bsSize="mini" onClick={this.closeModal}>Close the Dialog</Button>
+         <Button bsStyle="success" bsSize="small" onClick={this.closeModal}>Close the Dialog</Button>
         </Link>
        </div>
       </Modal>
